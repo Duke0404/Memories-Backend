@@ -1,37 +1,38 @@
-//Boilerplate
+// Boilerplate
+// Import express & its types
 import express, { Express, Request, Response } from 'express'
-import bodyParser from 'body-parser'
 
-//MongoDB
-import { MongoClient } from 'mongodb'
+// MongoDB
+// Import MongoClient & MongoDB types
+import { MongoClient, Db, Collection, WithId, Document } from 'mongodb'
 
-//Iterfaces
-// interface storageTempInterface {
-// 	id: number
-// 	upvotes: number
-// }
-
+// Constant to store express object
 const app: Express = express()
+// Constant to store MongoDB URI
+const mongoURI: string = 'mongodb://localhost:27017'
+// Constant to store port number to listen on
 const port: number = 8000
 
-app.use(bodyParser.json())
-
-//GET Routes
+// GET Routes
 app.get(
-	'/api/entries/:id',
-	async (req: Request, res: Response) => {
-		const entryId: number = +req.params.id
+	'/api/entries/:entryId',
+	(req: Request, res: Response) => {
+		const entryId: number = +req.params.entryId
 
-		await MongoClient.connect(
-			'mongodb://localhost:27017',
+		MongoClient.connect(
+			mongoURI,
+			{},
 			async (error, client) => {
-				if (error || client === undefined)
+				if (error || !client)
 					res.status(500).json({ message: 'Error connecting to db', error })
 
 				else {	
-					const db = client.db('memories-db')
-					const entryInfo = await db.collection('entries').findOne({ id: entryId })
+					const db: Db = await client.db('memories-db')
+
+					const entryInfo: WithId<Document> | null = await db.collection('entries').findOne({ id: entryId })
+
 					res.status(200).json(entryInfo)
+
 					client.close()
 				}
 			}
@@ -39,31 +40,30 @@ app.get(
 	}
 )
 
-//POST Routes
-// app.post(
-// 	'/api/entries/:id/upvote',
-// 	(req: Request, res: Response) => {
-// 		const entryId: number = parseInt(req.params.id)
+// const client: MongoClient = new MongoClient(mongoURI)
 
-// 		storageTemp[entryId].upvotes++
-// 		res.status(200).send(`Enrty now has ${storageTemp[entryId].upvotes} upvotes`)
+// async function run() {
+// 	try {
+// 		await client.connect()
+
+//     // database and collection code goes here
+// 		const db: Db = client.db('memories-db')
+// 		const collection: Collection<Document> = db.collection('entries')
+
+//     // find code goes here
+// 		const entryInfo: WithId<Document> | null = await collection.findOne({ id: 201401011248 })
+		
+//     // iterate code goes here
+
 // 	}
-// )
 
-// app.post(
-// 	'/api/entries/:id/add-comment',
-// 	(req: Request, res: Response) => {
-// 		const entryId: number = parseInt(req.params.id)
-// 		const userName: string = req.body.userName
-// 		const comment: string = req.body.comment
-
-// 		storageTemp[entryId].comments.push(
-// 			{ userName, comment }
-// 		)
-
-// 		res.status(200).send('Comment added')
+// 	finally {
+// 		await client.close();
 // 	}
-// )
+
+// }
+
+// run().catch(console.dir);
 
 app.listen(
 	port,

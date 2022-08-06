@@ -16,7 +16,7 @@ const port: number = 8000
 // GET Routes
 app.get(
 	'/api/entries/:entryId',
-	(req: Request, res: Response) => {
+	async (req: Request, res: Response) => {
 		const entryId: number = +req.params.entryId
 
 		MongoClient.connect(
@@ -35,7 +35,7 @@ app.get(
 						res.status(200).json(entryInfo)
 
 					else
-						res.status(404).json({ message: 'Entry not found' })
+						res.status(404).json({ message: 'Entry not found', error })
 
 					client.close()
 				}

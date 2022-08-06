@@ -26,57 +26,21 @@ app.get(
 					res.status(500).json({ message: 'Error connecting to db', error })
 
 				else {	
-					const db: Db = await client.db('memories-db')
+					const db: Db = client.db('memories-db')
+					const collection: Collection<Document> = db.collection('entries')
 
-					const entryInfo: WithId<Document> | null = await db.collection('entries').findOne({ id: entryId })
+					const entryInfo: WithId<Document> | null = await collection.findOne({ id: entryId })
 
-					res.status(200).json(entryInfo)
+					if(entryInfo)
+						res.status(200).json(entryInfo)
+
+					else
+						res.status(404).json({ message: 'Entry not found' })
 
 					client.close()
 				}
 			}
 		)
-	}
-)
-
-/*******************************************/
-// 201901011245
-
-// const listDatabases = async (client: MongoClient) => {
-// 	const databasesList = await client.db().admin().listDatabases()
-
-// 	console.log("Databases:")
-
-// 	databasesList.databases.forEach(db => console.log(` - ${db.name}`))
-// }
-
-// const main = async () => {
-// 	const client: MongoClient = new MongoClient(mongoURI)
-
-
-// 	try {
-// 		await client.connect()
-
-// 		await listDatabases(client)
-// 	}
-
-// 	catch (error) {
-// 		console.log(error)
-// 	}
-
-// 	finally {
-// 		await client.close()
-// 	}
-// }
-
-// main().catch(console.error)
-
-/*******************************************/
-
-app.get(
-	"/api/test",
-	(req: Request, res: Response) => {
-		res.status(200).send("Hello World")
 	}
 )
 

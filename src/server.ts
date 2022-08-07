@@ -17,8 +17,6 @@ const port: number = 8000
 app.use(bodyParser.json())
 
 const useEntries = async (operations: (collection: Collection) => Promise<void>, res: Response): Promise<void> => {
-	
-	
 	MongoClient.connect(
 		mongoURI,
 		async (error: Error | undefined, client: MongoClient | undefined) => {
@@ -26,8 +24,8 @@ const useEntries = async (operations: (collection: Collection) => Promise<void>,
 				res.status(500).json({ message: 'Error connecting to db', error })
 
 			else {	
-				const db: Db = await client.db('memories-db')
-				const collection: Collection<Document> = await db.collection('entries')
+				const db: Db = client.db('memories-db')
+				const collection: Collection<Document> = db.collection('entries')
 
 				await operations(collection)
 			

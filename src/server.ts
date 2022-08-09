@@ -2,6 +2,7 @@
 // Import express & its types
 import express, { Express, Request, Response } from 'express'
 import bodyParser from 'body-parser'
+import path from 'path'
 
 // MongoDB
 // Import MongoClient & MongoDB types
@@ -14,6 +15,7 @@ const mongoURI: string = 'mongodb://127.0.0.1:27017'
 // Constant to store port number to listen on
 const port: number = 8000
 
+app.use(express.static(path.join(__dirname, '/build')))
 app.use(bodyParser.json())
 
 const useEntries = async (operations: (collection: Collection) => Promise<void>, res: Response): Promise<void> => {
@@ -107,6 +109,13 @@ app.post(
 			},
 			res
 		)
+	}
+)
+
+app.get(
+	'*',
+	(req: Request, res: Response) => {
+		res.sendFile(path.join(__dirname, '/build/index.html'))
 	}
 )
 

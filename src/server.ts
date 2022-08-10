@@ -3,6 +3,11 @@
 import express, { Express, Request, Response } from 'express'
 import bodyParser from 'body-parser'
 import path from 'path'
+import { fileURLToPath  } from "url";
+
+// Dirname functionality
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 // MongoDB
 // Import MongoClient & MongoDB types

@@ -104,8 +104,4 @@
   "include": [
     "**/*"
   ],
-
-  "exclude": [
-    "./src/build/*"
-  ]
 }
